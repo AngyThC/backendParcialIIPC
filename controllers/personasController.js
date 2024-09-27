@@ -4,7 +4,7 @@ const PersonaFactory = require('../factories/PersonaFactory');
 
 module.exports = {
     // Obtener todas las personas
-    find(req, res) {
+    getAll(req, res) {
         PersonaFactory.findAllPersonas()
             .then(personas => {
                 return res.status(200).send(personas);
@@ -18,7 +18,7 @@ module.exports = {
     },
 
     // Obtener una persona por su ID
-    findById(req, res) {
+    getById(req, res) {
         const id = req.params.id;
         PersonaFactory.findPersonaById(id)
             .then(persona => {
@@ -37,64 +37,70 @@ module.exports = {
             });
     },
 
-    // Crear una nueva persona
-    create(req, res) {
-        const datosIngreso = { 
-            nombre: req.body.nombre,
-            apellido: req.body.apellido,
-            edad: req.body.edad,
-            profesion: req.body.profesion,
-            universidad: req.body.universidad,
-            carrera: req.body.carrera,
-            trabajo: req.body.trabajo,
-            vehiculo: req.body.vehiculo,
-            estado: req.body.estado
-        };
+  // Crear una nueva persona
+create(req, res) {
+    const { nombre, apellido, edad, profesion, universidad, carrera, trabajo, vehiculo, estado } = req.body;
 
-        PersonaFactory.createPersona(datosIngreso)
-            .then(persona => {
-                res.status(201).send(persona);
-            })
-            .catch(error => {
-                console.error('Error al insertar persona:', error);
-                return res.status(500).json({ error: 'Error al insertar persona' });
-            });
-    },
+    
+    if (!nombre || !apellido || !edad) {
+        return res.status(400).json({ message: 'Datos incompletos para crear la persona.' });
+    }
+
+    const datosIngreso = { 
+        nombre,
+        apellido,
+        edad,
+        profesion,
+        universidad,
+        carrera,
+        trabajo,
+        vehiculo,
+        estado
+    };
+
+    PersonaFactory.createPersona(datosIngreso)
+        .then(persona => {
+            res.status(201).send(persona);
+        })
+        .catch(error => {
+            console.error('Error al insertar persona:', error);
+            return res.status(500).json({ error: 'Error al insertar persona' });
+        });
+},
 
     // Actualizar una persona existente
     update(req, res) {
         const id = req.params.id;
-        const camposActualizados = req.body;
-
-        PersonaFactory.updatePersona(id, camposActualizados)
-            .then(([rowsUpdated]) => {
-                if (rowsUpdated === 0) {
-                    return res.status(404).send({ message: 'Persona no encontrada o no se pudo actualizar.' });
+        const datosActualizados = req.body;
+    
+      
+        if (!datosActualizados.nombre || !datosActualizados.apellido) {
+            return res.status(400).json({ message: 'Datos incompletos para actualizar la persona.' });
+        }
+    
+       
+        PersonaFactory.updatePersona(id, datosActualizados)
+            .then(personaActualizada => {
+                if (!personaActualizada) {
+                    return res.status(404).json({ message: 'Persona no encontrada.' });
                 }
-                return res.status(200).send('La persona ha sido actualizada');
+                return res.status(200).json(personaActualizada);
             })
             .catch(error => {
                 console.error('Error al actualizar persona:', error);
                 return res.status(500).json({ error: 'Error al actualizar persona' });
             });
     },
+    
 
     // Eliminar una persona por su ID
-    async delete(req, res) {
-        const id = req.params.id; 
-
-        try {
-            const persona = await PersonaFactory.findPersonaById(id);
-
-            if (!persona) {
-                return res.status(404).json({ error: 'Persona no encontrada' });
-            }
-
-            await PersonaFactory.deletePersona(id);
-            return res.json({ message: 'Persona eliminada correctamente' });
-        } catch (error) {
-            console.error('Error al eliminar persona:', error);
-            return res.status(500).json({ error: 'Error al eliminar persona' });
+    delete: async (req, res) => {
+        const { id } = req.params;
+        const personaEliminada = await PersonaFactory.deletePersona(id);
+        if (personaEliminada) {
+            return res.status(200).json({ message: 'Persona eliminada correctamente.' });
         }
+        return res.status(404).json({ message: 'Persona no encontrada.' });
     }
+    
 };
