@@ -9,6 +9,7 @@ const PersonaFactory = require('../factories/PersonaFactory');
 const app = express();
 app.use(bodyParser.json()); 
 
+
 app.get('/personas/get', personasController.getAll);
 app.get('/personas/get/:id', personasController.getById); /
 app.post('/personas/create', personasController.create); 
