@@ -29,7 +29,7 @@ module.exports = (app) => {
     router.get('/alertas/proyecto/:idProyecto/checkIfSevenDaysLeft', alertasController.checkIfSevenDaysLeft);
    
     // Rutas de Personas
-    router.get('/personas/get', personasController.getAll); // Cambiado aquí
+    router.get('/personas/get', personasController.getAll); 
     router.get('/personas/get/:id', personasController.getById);
     router.post('/personas/create', personasController.create);
     router.put('/personas/update/:id', personasController.update);

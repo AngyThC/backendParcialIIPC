@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 
 app.get('/personas/get', personasController.getAll);
-app.get('/personas/get/:id', personasController.getById); /
+app.get('/personas/get/:id', personasController.getById); 
 app.post('/personas/create', personasController.create); 
 app.put('/personas/update/:id', personasController.update); 
 app.delete('/personas/delete/:id', personasController.delete);
