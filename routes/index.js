@@ -2,6 +2,7 @@ const { Router } = require('express');
 const proyectosController = require('../controllers/proyectosController');
 const empleadosController = require('../controllers/empleadosController');
 const alertasController = require('../controllers/alertasController');
+const personasController = require('../controllers/personasController');
 const router = Router();
 
 
@@ -27,7 +28,11 @@ module.exports = (app) => {
     router.delete('/alertas/delete/:id', alertasController.delete);
     router.get('/alertas/proyecto/:idProyecto/checkIfSevenDaysLeft', alertasController.checkIfSevenDaysLeft);
 
-
+    router.get('/personas/get', personasController.find);
+    router.get('/personas/:id', personasController.findById);
+    router.post('/personas/create', personasController.create);
+    router.put('/personas/update/:id', personasController.update);
+    router.delete('/personas/delete/:id', personasController.delete);
     // Utilizar el enrutador en la aplicación
     app.use('/', router);
 };
